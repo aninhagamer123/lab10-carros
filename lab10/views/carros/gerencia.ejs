@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerência de Carros</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">&#9679; LAB10</a>
+    <a href="/projects">Projects</a>
+    <a href="/carros">Listagem</a>
+    <a href="/carros/gerencia">Gerência</a>
+    <a href="/usuarios/login">Login</a>
+  </nav>
+
+  <div class="container">
+    <h1>Gerência de <span>Carros</span></h1>
+    <p class="subtitle">Cadastre, edite, remova e venda veículos</p>
+
+    <!-- ALERTAS DINÂMICOS -->
+    <% const sucesso = typeof query !== 'undefined' ? null : null; %>
+    <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+      <div class="alert alert-success"><%= sucesso %></div>
+    <% } %>
+    <% if (typeof erro !== 'undefined' && erro) { %>
+      <div class="alert alert-danger"><%= erro %></div>
+    <% } %>
+
+    <!-- BOTÃO ABRIR MODAL DE CADASTRO -->
+    <div class="heading-row">
+      <h2>Estoque Atual</h2>
+      <button class="btn btn-primary" onclick="abrirModal()">+ Novo Carro</button>
+    </div>
+
+    <!-- TABELA DE CARROS (dinâmica com dados do BD) -->
+    <div class="card wide">
+      <div class="table-wrap">
+        <% if (carros.length === 0) { %>
+          <p style="text-align:center; color: var(--text-muted); padding: 2rem;">Nenhum carro cadastrado. Clique em "Novo Carro" para começar.</p>
+        <% } else { %>
+          <table>
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Qtde</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% carros.forEach(carro => { %>
+                <tr>
+                  <td><%= carro.marca %></td>
+                  <td><strong><%= carro.modelo %></strong></td>
+                  <td><%= carro.ano %></td>
+                  <td><%= carro.qtde_disponivel %></td>
+                  <td>
+                    <% if (carro.qtde_disponivel > 0) { %>
+                      <span class="badge badge-success">Disponível</span>
+                    <% } else { %>
+                      <span class="badge badge-danger">&#9888; ESGOTADO</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="actions">
+                      <!-- VENDER -->
+                      <% if (carro.qtde_disponivel > 0) { %>
+                        <form action="/carros/vender/<%= carro._id %>" method="POST" style="display:inline;">
+                          <button type="submit" class="btn btn-success btn-sm"
+                            onclick="return confirm('Confirmar venda de <%= carro.marca %> <%= carro.modelo %>?')">
+                            Vender
+                          </button>
+                        </form>
+                      <% } else { %>
+                        <button class="btn btn-sm" disabled
+                          style="background:#333;color:#666;cursor:not-allowed;">Esgotado</button>
+                      <% } %>
+
+                      <!-- EDITAR -->
+                      <a href="/carros/editar/<%= carro._id %>" class="btn btn-warning btn-sm">Editar</a>
+
+                      <!-- REMOVER -->
+                      <form action="/carros/remover/<%= carro._id %>" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                          onclick="return confirm('Tem certeza que deseja remover <%= carro.marca %> <%= carro.modelo %>?')">
+                          Remover
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CADASTRAR NOVO CARRO -->
+  <div class="modal-overlay" id="modalCadastro">
+    <div class="modal">
+      <h2>+ Novo <span style="color:var(--accent)">Carro</span></h2>
+      <form action="/carros/cadastrar" method="POST">
+        <div class="form-group">
+          <label>Marca</label>
+          <input type="text" name="marca" placeholder="Ex: Toyota" required>
+        </div>
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" name="modelo" placeholder="Ex: Corolla" required>
+        </div>
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="number" name="ano" placeholder="Ex: 2023" min="1900" max="2030" required>
+        </div>
+        <div class="form-group">
+          <label>Quantidade Disponível</label>
+          <input type="number" name="qtde_disponivel" placeholder="Ex: 5" min="0" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Ler query params para exibir alertas
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('sucesso')) {
+      const el = document.createElement('div');
+      el.className = 'alert alert-success';
+      el.textContent = params.get('sucesso');
+      document.querySelector('.container').insertBefore(el, document.querySelector('.heading-row'));
+      // limpa URL
+      history.replaceState({}, '', '/carros/gerencia');
+    }
+    if (params.get('erro')) {
+      const el = document.createElement('div');
+      el.className = 'alert alert-danger';
+      el.textContent = params.get('erro');
+      document.querySelector('.container').insertBefore(el, document.querySelector('.heading-row'));
+      history.replaceState({}, '', '/carros/gerencia');
+    }
+
+    function abrirModal() {
+      document.getElementById('modalCadastro').classList.add('active');
+    }
+    function fecharModal() {
+      document.getElementById('modalCadastro').classList.remove('active');
+    }
+    // Fechar modal ao clicar fora
+    document.getElementById('modalCadastro').addEventListener('click', function(e) {
+      if (e.target === this) fecharModal();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Carro</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">&#9679; LAB10</a>
+    <a href="/projects">Projects</a>
+    <a href="/carros">Listagem</a>
+    <a href="/carros/gerencia">Gerência</a>
+    <a href="/usuarios/login">Login</a>
+  </nav>
+
+  <div class="container">
+    <h1>Editar <span>Carro</span></h1>
+    <p class="subtitle">Atualize as informações do veículo</p>
+
+    <% if (erro) { %>
+      <div class="alert alert-danger"><%= erro %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/carros/atualizar/<%= carro._id %>" method="POST">
+        <div class="form-group">
+          <label>Marca</label>
+          <input type="text" name="marca" value="<%= carro.marca %>" required>
+        </div>
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" name="modelo" value="<%= carro.modelo %>" required>
+        </div>
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="number" name="ano" value="<%= carro.ano %>" min="1900" max="2030" required>
+        </div>
+        <div class="form-group">
+          <label>Quantidade Disponível</label>
+          <input type="number" name="qtde_disponivel" value="<%= carro.qtde_disponivel %>" min="0" required>
+        </div>
+        <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+          <a href="/carros/gerencia" class="btn btn-outline" style="flex:1; text-align:center;">Cancelar</a>
+          <button type="submit" class="btn btn-primary" style="flex:1;">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

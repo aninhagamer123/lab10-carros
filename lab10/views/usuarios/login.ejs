@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">&#9679; LAB10</a>
+    <a href="/projects">Projects</a>
+    <a href="/carros">Carros</a>
+    <a href="/usuarios/cadastro">Cadastro</a>
+  </nav>
+
+  <div class="container">
+    <h1>Entrar no <span>Sistema</span></h1>
+    <p class="subtitle">Faça login para gerenciar os carros</p>
+
+    <% if (erro) { %>
+      <div class="alert alert-danger"><%= erro %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/usuarios/login" method="POST">
+        <div class="form-group">
+          <label for="login">Login</label>
+          <input type="text" id="login" name="login" placeholder="Seu login" required>
+        </div>
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+      </form>
+
+      <div class="divider">ou</div>
+
+      <a href="/usuarios/cadastro" class="btn btn-outline btn-full">Criar conta</a>
+    </div>
+  </div>
+</body>
+</html>

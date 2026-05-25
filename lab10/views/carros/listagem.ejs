@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carros Disponíveis</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">&#9679; LAB10</a>
+    <a href="/projects">Projects</a>
+    <a href="/carros">Listagem</a>
+    <a href="/carros/gerencia">Gerência</a>
+    <a href="/usuarios/login">Login</a>
+  </nav>
+
+  <div class="container">
+    <h1>Carros <span>Disponíveis</span></h1>
+    <p class="subtitle">Confira nosso estoque de veículos</p>
+
+    <% if (carros.length === 0) { %>
+      <div class="alert alert-danger">Nenhum carro cadastrado ainda.</div>
+    <% } else { %>
+      <div class="cars-grid">
+        <% carros.forEach(carro => { %>
+          <div class="car-card">
+            <div class="car-brand"><%= carro.marca %></div>
+            <div class="car-model"><%= carro.modelo %></div>
+            <div class="car-year">Ano: <%= carro.ano %></div>
+            <% if (carro.qtde_disponivel > 0) { %>
+              <span class="badge badge-success">&#10003; <%= carro.qtde_disponivel %> disponível(is)</span>
+            <% } else { %>
+              <span class="badge badge-danger">&#9888; ESGOTADO</span>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
